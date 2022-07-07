@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:  
+  sheetable:
+    container_name: sheetable
+    restart: unless-stopped
+    image: vallezw/sheetable
+    ports:
+      - 80:8080
+    environment:
+      - ADMIN_EMAIL=zengqiang96@gmail.com
+      - ADMIN_PASSWORD=123456
+networks:
+  sx-net:
+    external: true # 使用自定义创建好的网络，我创建的网络名加sx-net，方便与其他服务通信

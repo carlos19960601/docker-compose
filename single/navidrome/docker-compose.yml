@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  navidrome:
+    container_name: navidrome
+    image: deluan/navidrome:latest
+    restart: unless-stopped
+    environment:
+      - ND_LOGLEVEL=info
+    volumes:
+      - ./data:/data
+      - ./music:/music
+    ports: 
+      - 4533:4533
+    networks:
+      - sx-net
+networks:
+  sx-net:
+    external: true # 使用自定义创建好的网络，我创建的网络名加sx-net，方便与其他服务通信

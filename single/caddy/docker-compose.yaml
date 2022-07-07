@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  caddy:
+    image: caddy:2.4.6-alpine
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      # - $PWD/site:/srv
+      # - caddy_data:/data
+      # - caddy_config:/config
+    networks:
+      - sx-net
+  http1:
+    image: tutum/hello-world
+    networks:
+      - sx-net
+  http2:
+    image: tutum/hello-world
+    networks:
+      - sx-net
+ 
+networks:
+  sx-net:
+    external: true # 使用自定义创建好的网络，我创建的网络名加sx-net，方便与其他服务通信

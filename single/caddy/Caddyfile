@@ -1,0 +1,13 @@
+http://cdn.dmtech.com {
+  root * /
+  file_server browse
+}
+	
+http://api.dmtech.com {
+  handle /v1/*  {
+    reverse_proxy http1
+  }
+  handle_path /v2/* {
+    reverse_proxy http2
+  }
+}

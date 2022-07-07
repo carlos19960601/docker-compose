@@ -1,0 +1,88 @@
+version: '3.8'
+services: 
+  zoo1:
+    image: zookeeper:latest
+    hostname: zoo1
+    container_name: sx_zoo1
+    # ports:
+    #  - "2181:2181"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    networks:
+      - sx-net
+  zoo2:
+    image: zookeeper:latest
+    hostname: zoo2
+    container_name: sx_zoo2
+    # ports:
+      # - "2182:2181"
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    networks:
+      - sx-net
+  zoo3:
+    image: zookeeper:latest
+    hostname: zoo3
+    container_name: sx_zoo3
+    # ports:
+    #   - "2183:2181"
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
+    networks:
+      - sx-net
+  kafka1: 
+    image: wurstmeister/kafka
+    container_name: sx-kafka1
+    hostname: kafka1
+    ports:
+      - 9090:9092
+    environment: 
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://:9092
+      KAFKA_LISTENERS: PLAINTEXT://:9092
+      KAFKA_BROKER_ID: 0
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
+    networks: 
+      - sx-net
+  kafka2: 
+    image: wurstmeister/kafka
+    container_name: sx-kafka2
+    hostname: kafka2
+    ports:
+      - 9091:9092
+    environment: 
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://:9092
+      KAFKA_LISTENERS: PLAINTEXT://:9092
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
+    networks: 
+      - sx-net
+  kafka3: 
+    image: wurstmeister/kafka
+    container_name: sx-kafka3
+    hostname: kafka3
+    ports:
+      - 9092:9092
+    environment: 
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://:9092
+      KAFKA_LISTENERS: PLAINTEXT://:9092
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
+    networks: 
+      - sx-net
+  
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    ports:
+      - 8080:8080
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: sx-kafka1:9092,sx-kafka2:9092,sx-kafka3:9092
+    networks: 
+      - sx-net
+networks:
+  sx-net:
+    external: true

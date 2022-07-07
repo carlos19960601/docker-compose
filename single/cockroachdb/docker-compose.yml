@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  roach1:
+    container_name: roach1
+    image: cockroachdb/cockroach:v21.2.7
+    volumes: 
+      - ./roach1:/cockroach/cockroach-data
+    ports:
+      - 26257:26257
+      - 8080:8080
+    command: 
+      - start
+      - --insecure
+      - --join=roach1,roach2,roach3
+    networks:
+      - sx-net
+  roach2:
+    container_name: roach2
+    image: cockroachdb/cockroach:v21.2.7
+    volumes: 
+      - ./roach2:/cockroach/cockroach-data
+    command: 
+      - start
+      - --insecure
+      - --join=roach1,roach2,roach3
+    networks:
+      - sx-net
+  roach3:
+    container_name: roach3
+    image: cockroachdb/cockroach:v21.2.7
+    volumes: 
+      - ./roach3:/cockroach/cockroach-data
+    command: 
+      - start
+      - --insecure
+      - --join=roach1,roach2,roach3
+    networks:
+      - sx-net
+networks:
+  sx-net:
+    external: true # 使用自定义创建好的网络，我创建的网络名加sx-net，方便与其他服务通信
