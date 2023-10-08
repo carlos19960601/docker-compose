@@ -1,23 +1,5 @@
 version: "3.8"
 
-# Settings and configurations that are common for all containers
-x-minio-common: &minio-common
-  image: quay.io/minio/minio
-  command: server --console-address ":9001" http://minio{1...4}/data{1...2}
-  expose:
-    - "9000"
-    - "9001"
-  environment:
-    MINIO_ROOT_USER: minioadmin
-    MINIO_ROOT_PASSWORD: minioadmin
-    MINIO_SERVER_URL: "http://minio.poine.com"
-    MINIO_BROWSER_REDIRECT_URL: "http://minio.poine.com/minio/ui"
-  healthcheck:
-    test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-    interval: 30s
-    timeout: 20s
-    retries: 3
-
 services:
   nginx:
     container_name: sx-nginx
@@ -47,48 +29,67 @@ services:
       - 3000
     networks:
       - sx-net
-  minio1:
-    <<: *minio-common
-    hostname: minio1
-    container_name: minio1
+  seaweed-master:
+    image: chrislusf/seaweedfs # use a remote image
+    container_name: seaweed-master
+    command: "master -port=9333 -ip=seaweed-master"
+    expose:
+      - 9333
+      - 19333
     volumes:
-      - ./minio/data1-1:/data1
-      - ./minio/data1-2:/data2
-    extra_hosts:
-      - "minio.poine.com:sx-nginx"
+      - ./seaweed/master:/data
     networks:
       - sx-net
-  minio2:
-    <<: *minio-common
-    hostname: minio2
-    container_name: minio2
+  seaweed-volume1:
+    image: chrislusf/seaweedfs # use a remote image
+    container_name: seaweed-volume1
+    command: 'volume -mserver="seaweed-master:9333" -max=100 -port=8080 -ip=seaweed-volume1'
+    expose:
+      - 8080
+      - 18080
     volumes:
-      - ./minio/data2-1:/data1
-      - ./minio/data2-2:/data2
-    extra_hosts:
-      - "minio.poine.com:sx-nginx"
+      - ./seaweed/volume1:/data
+    depends_on:
+      - seaweed-master
     networks:
       - sx-net
-  minio3:
-    <<: *minio-common
-    hostname: minio3
-    container_name: minio3
+  seaweed-volume2:
+    image: chrislusf/seaweedfs # use a remote image
+    container_name: seaweed-volume2
+    command: 'volume -mserver="seaweed-master:9333" -max=100 -port=8080 -ip=seaweed-volume2'
+    expose:
+      - 8080
+      - 18080
     volumes:
-      - ./minio/data3-1:/data1
-      - ./minio/data3-2:/data2
-    extra_hosts:
-      - "minio.poine.com:sx-nginx"
+      - ./seaweed/volume2:/data
+    depends_on:
+      - seaweed-master
     networks:
       - sx-net
-  minio4:
-    <<: *minio-common
-    hostname: minio4
-    container_name: minio4
+  seaweed-volume3:
+    image: chrislusf/seaweedfs # use a remote image
+    container_name: seaweed-volume3
+    command: 'volume -mserver="seaweed-master:9333" -max=100 -port=8080 -ip=seaweed-volume3'
+    expose:
+      - 8080
+      - 18080
     volumes:
-      - ./minio/data4-1:/data1
-      - ./minio/data4-2:/data2
-    extra_hosts:
-      - "minio.poine.com:sx-nginx"
+      - ./seaweed/volume3:/data
+    depends_on:
+      - seaweed-master
+    networks:
+      - sx-net
+  seaweed-volume4:
+    image: chrislusf/seaweedfs # use a remote image
+    container_name: seaweed-volume4
+    command: 'volume -mserver="seaweed-master:9333" -max=100 -port=8080 -ip=seaweed-volume4'
+    expose:
+      - 8080
+      - 18080
+    volumes:
+      - ./seaweed/volume4:/data
+    depends_on:
+      - seaweed-master
     networks:
       - sx-net
 networks:
