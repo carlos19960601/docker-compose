@@ -17,7 +17,15 @@ services:
     image: emi-note:0.0.1
     restart: always
     ports:
-      - "3000:3000"
+      - 3000
+    networks:
+      - sx-net
+  minderly-dashboard:
+    container_name: minderly-dashboard
+    image: minderly-dashboard:0.0.1
+    restart: always
+    ports:
+      - 3000
     networks:
       - sx-net
 networks:
