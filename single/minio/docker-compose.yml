@@ -10,6 +10,8 @@ x-minio-common: &minio-common
   environment:
     MINIO_ROOT_USER: minioadmin
     MINIO_ROOT_PASSWORD: minioadmin
+    MINIO_SERVER_URL: http://minio.poine.com
+    MINIO_BROWSER_REDIRECT_URL: http://console.poine.com/
   healthcheck:
     test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
     interval: 30s
