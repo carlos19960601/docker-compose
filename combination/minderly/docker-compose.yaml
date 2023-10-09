@@ -1,6 +1,37 @@
 version: "3.8"
 
 services:
+  mysql:
+    container_name: sx-mysql
+    image: mysql:5.7
+    restart: always
+    secrets:
+      - mysql_root_password
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+    ports:
+      - 3306:3306
+    expose: 
+      - 3306
+    volumes:
+      - ./mysql/data:/var/lib/mysql # data目录我通过.gitignore文件忽略了
+      - ./mysql/conf:/etc/mysql/conf.d # 可以在这个目录下指定mysql的配置文件
+    networks:
+      - sx-net
+  redis:
+    image: redis:latest
+    container_name: sx-redis
+    restart: always
+    volumes:
+      - ./redis/data:/data
+      - ./redis/config/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - 6379:6379
+    networks:
+      - sx-net
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
   nginx:
     container_name: sx-nginx
     image: nginx:latest
@@ -17,7 +48,7 @@ services:
     container_name: emi-note
     image: emi-note:0.0.1
     restart: always
-    ports:
+    expose:
       - 3000
     networks:
       - sx-net
@@ -25,8 +56,17 @@ services:
     container_name: minderly-dashboard
     image: minderly-dashboard:0.0.1
     restart: always
-    ports:
+    expose:
       - 3000
+    networks:
+      - sx-net
+  minderly-admin-api:
+    container_name: minderly-admin-api
+    image: minderly-admin-api:v0.0.1
+    restart: always
+    ports:
+      - 8000
+    entrypoint: ["./server", "-conf=config/prod.yml"]
     networks:
       - sx-net
   seaweed-master:
@@ -95,3 +135,6 @@ services:
 networks:
   sx-net:
     external: true # 使用自定义创建好的网络，我创建的网络名加sx-net，方便与其他服务通信
+secrets:
+  mysql_root_password:
+    file: ./mysql/mysql_root_password.txt # 用文件指定root的密码
