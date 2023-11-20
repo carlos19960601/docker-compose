@@ -54,7 +54,7 @@ services:
       - sx-net
   minderly-dashboard:
     container_name: minderly-dashboard
-    image: minderly-dashboard:0.0.1
+    image: minderly-dashboard:v0.0.1
     restart: always
     expose:
       - 3000
@@ -69,9 +69,19 @@ services:
     entrypoint: ["./server", "-conf=config/prod.yml"]
     networks:
       - sx-net
+  minderly-portal-api:
+    container_name: minderly-portal-api
+    image: minderly-portal-api:v0.0.1
+    restart: always
+    expose:
+      - 8000
+    entrypoint: ["./server", "-conf=config/prod.yml"]
+    networks:
+      - sx-net
   seaweed-master:
     image: chrislusf/seaweedfs # use a remote image
     container_name: seaweed-master
+    restart: always
     command: "master -port=9333 -ip=seaweed-master"
     expose:
       - 9333
@@ -83,6 +93,7 @@ services:
   seaweed-volume1:
     image: chrislusf/seaweedfs # use a remote image
     container_name: seaweed-volume1
+    restart: always
     command: 'volume -mserver="seaweed-master:9333" -max=100 -port=8080 -ip=seaweed-volume1'
     expose:
       - 8080
@@ -96,6 +107,7 @@ services:
   seaweed-volume2:
     image: chrislusf/seaweedfs # use a remote image
     container_name: seaweed-volume2
+    restart: always
     command: 'volume -mserver="seaweed-master:9333" -max=100 -port=8080 -ip=seaweed-volume2'
     expose:
       - 8080
@@ -109,6 +121,7 @@ services:
   seaweed-volume3:
     image: chrislusf/seaweedfs # use a remote image
     container_name: seaweed-volume3
+    restart: always
     command: 'volume -mserver="seaweed-master:9333" -max=100 -port=8080 -ip=seaweed-volume3'
     expose:
       - 8080
@@ -122,6 +135,7 @@ services:
   seaweed-volume4:
     image: chrislusf/seaweedfs # use a remote image
     container_name: seaweed-volume4
+    restart: always
     command: 'volume -mserver="seaweed-master:9333" -max=100 -port=8080 -ip=seaweed-volume4'
     expose:
       - 8080
