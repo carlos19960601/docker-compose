@@ -78,6 +78,15 @@ services:
     entrypoint: ["./server", "-conf=config/prod.yml"]
     networks:
       - sx-net
+  minderly-portal-task:
+    container_name: minderly-portal-task
+    image: minderly-portal-task:v0.0.1
+    restart: always
+    expose:
+      - 8000
+    entrypoint: ["./server", "-conf=config/prod.yml"]
+    networks:
+      - sx-net
   seaweed-master:
     image: chrislusf/seaweedfs # use a remote image
     container_name: seaweed-master
