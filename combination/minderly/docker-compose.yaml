@@ -13,7 +13,7 @@ services:
       MYSQL_PASSWORD: mysql
     ports:
       - 3306:3306
-    expose: 
+    expose:
       - 3306
     volumes:
       - ./mysql/data:/var/lib/mysql # data目录我通过.gitignore文件忽略了
@@ -153,6 +153,16 @@ services:
       - ./seaweed/volume4:/data
     depends_on:
       - seaweed-master
+    networks:
+      - sx-net
+  bytebase:
+    image: bytebase/bytebase:2.12.1
+    container_name: bytebase
+    restart: always
+    volumes:
+      - ./bytebase/data:/var/opt/bytebase
+    expose:
+      - 8080
     networks:
       - sx-net
 networks:
