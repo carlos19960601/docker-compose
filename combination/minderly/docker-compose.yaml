@@ -155,16 +155,6 @@ services:
       - seaweed-master
     networks:
       - sx-net
-  bytebase:
-    image: bytebase/bytebase:2.12.1
-    container_name: bytebase
-    restart: always
-    volumes:
-      - ./bytebase/data:/var/opt/bytebase
-    expose:
-      - 8080
-    networks:
-      - sx-net
 networks:
   sx-net:
     external: true # 使用自定义创建好的网络，我创建的网络名加sx-net，方便与其他服务通信
