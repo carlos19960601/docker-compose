@@ -156,7 +156,7 @@ services:
     networks:
       - sx-net
   music-api:
-    image: binaryify/netease_cloud_music_api
+    image: binaryify/netease_cloud_music_api:v4.3.0
     container_name: music-api
     restart: always
     expose:
